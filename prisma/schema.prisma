@@ -1,0 +1,21 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Categoria {
+  id             Int             @id @default(autoincrement())
+  nome           String
+  subcategorias  Subcategoria[]
+}
+
+model Subcategoria {
+  id             Int             @id @default(autoincrement())
+  nome           String
+  categoriaId    Int
+  categoria      Categoria        @relation(fields: [categoriaId], references: [id])
+}

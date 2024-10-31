@@ -1,11 +1,11 @@
 import express from "express"
-import * as pedidosController from "../controllers/pedidosController.js"
+import * as produtosController from "../controller/produtosController.js"
 
 
 const route = express.Router()
-route.get('/',pedidosController.getAll)
-route.get('/getone/:id',pedidosController.getOne)
-route.delete('/:id',pedidosController.deletar)
-route.post('/',pedidosController.store)
-route.put('/:id',pedidosController.update)
+route.get('/',produtosController.getAll)
+route.get('/getone/:id',produtosController.getOne)
+route.delete('/:id',produtosController.deletar)
+route.post('/',produtosController.store)
+route.put('/:id',produtosController.update)
 export default route

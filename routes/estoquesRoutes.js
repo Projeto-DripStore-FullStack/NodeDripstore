@@ -1,5 +1,5 @@
 import express from "express"
-import * as estoquesController from "../controllers/estoquesController.js"
+import * as estoquesController from "../controller/estoquesController.js"
 
 const route = express.Router()
 route.get('/',estoquesController.getAll)

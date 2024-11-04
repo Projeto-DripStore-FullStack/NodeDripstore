@@ -15,7 +15,7 @@ model Produtos {
   price      String
   promotion  Decimal
   base_url   String
-  categorias Categorias[] @relation("ProdutoCategoria")
+  categorias Categoria[] @relation("ProdutoCategoria")
   estoque    Estoque[]  @relation("ProdutoEstoque") // Adicionando relação oposta
 }
 
@@ -24,7 +24,7 @@ model Usuarios {
   nome     String
   cpf      String
   telefone String
-  email    String
+  email     String  @unique 
   password String
   pedidos  Pedidos[]
 }
@@ -48,7 +48,7 @@ model Pedidos {
   usuario        Usuarios @relation(fields: [usuario_id], references: [id])
 }
 
-model Categorias {
+model Categoria {
   id       Int       @id @default(autoincrement())
   nome     String
   produtos Produtos[] @relation("ProdutoCategoria")

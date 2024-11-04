@@ -1,5 +1,5 @@
 import express from "express"
-import * as pedidosController from "../controllers/pedidosController.js"
+import * as pedidosController from "../controller/pedidosController.js"
 
 
 const route = express.Router()

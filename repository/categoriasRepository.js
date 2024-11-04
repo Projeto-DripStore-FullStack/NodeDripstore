@@ -15,10 +15,7 @@ export const getOne = async (id) => {
 
 export const deletar = async (id) => {
   try {
-    await prisma.subcategoria.deleteMany({
-      where: { categoriaId: parseInt(id) },
-    });
-
+    // Deletar a categoria pelo ID
     return await prisma.categoria.delete({
       where: { id: parseInt(id) },
     });

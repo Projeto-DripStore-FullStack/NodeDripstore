@@ -20,13 +20,18 @@ model Produtos {
 }
 
 model Usuarios {
-  id       Int      @id @default(autoincrement())
-  nome     String
-  cpf      String
-  telefone String
-  email     String  @unique 
-  password String
-  pedidos  Pedidos[]
+  id          Int      @id @default(autoincrement())
+  nome        String
+  cpf         String
+  telefone    String
+  email       String   @unique
+  password    String
+  endereco    String   // Campo para o endereço do usuário
+  bairro      String   // Campo para o bairro
+  cidade      String   // Campo para a cidade
+  complemento String?  // Campo opcional para o complemento
+  cep         String   // Campo para o CEP
+  pedidos     Pedidos[]
 }
 
 model Estoque {

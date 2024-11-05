@@ -23,39 +23,43 @@ export const getOne = async (req, res) => {
 export const store = async (req, res) => {
   try {
     let { password, ...otherData } = req.body;
-
-    // Hash da senha com 10 salt rounds
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // Crie o objeto com os dados do usuário, incluindo a senha hash
     const userData = { ...otherData, password: hashedPassword };
 
-    // Salve os dados com a senha hash
     await usuariosRepository.store(userData);
-    res.status(200).send("Usuário cadastrado com sucesso");
+    res.status(201).send("Usuário cadastrado com sucesso");
   } catch (error) {
     res.status(500).send(`O erro foi ${error}`);
   }
 };
 
 export const loginUser = async (req, res) => {
-    console.log("Tentativa de login:", req.body);
+  console.log("Tentativa de login:", req.body);
+
   try {
     let { email, password } = req.body;
-    const usuario = await usuariosRepository.getByEmail(email);
 
+    // Recuperar o usuário pelo email
+    const usuario = await usuariosRepository.getByEmail(email);
     if (!usuario) {
       return res.status(404).send("Usuário não encontrado");
     }
 
+    console.log("Senha do usuário (hash):", usuario.password);
+
     const isPasswordValid = await bcrypt.compare(password, usuario.password);
+    console.log("Senha fornecida:", password);
+
     if (!isPasswordValid) {
+      console.log("Senha incorreta para o email:", email);
       return res.status(401).send("Senha incorreta");
     }
 
+    console.log("Usuário logado com sucesso:", email);
     res.status(200).send("Usuário logado com sucesso");
   } catch (error) {
+    console.error(`Erro ao logar o usuário: ${error}`);
     res.status(500).send(`Erro ao logar o usuário: ${error}`);
   }
 };

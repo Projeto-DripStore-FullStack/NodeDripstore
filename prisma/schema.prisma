@@ -18,6 +18,8 @@ model Produtos {
   cor        String   // Cor do produto
   tamanho    Tamanho     // Tamanho do produto (PP, P, M, G, GG)
   genero     Genero   // Gênero do produto (Masculino, Feminino, Unissex)
+  marca      String   // Marca do produto
+  categoria  Categorias
   categorias Categoria[] @relation("ProdutoCategoria")
   estoque    Estoque[]  @relation("ProdutoEstoque")
 }
@@ -74,4 +76,11 @@ enum Genero {
 Masculino
 Feminino
 Unissex
+}
+
+enum Categorias {
+Esporte
+Utilitario
+Corrida
+Casual
 }

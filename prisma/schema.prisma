@@ -15,8 +15,13 @@ model Produtos {
   price      String
   promotion  Decimal
   base_url   String
+  cor        String   // Cor do produto
+  tamanho    Tamanho     // Tamanho do produto (PP, P, M, G, GG)
+  genero     Genero   // Gênero do produto (Masculino, Feminino, Unissex)
+  marca      String   // Marca do produto
+  categoria  Categorias
   categorias Categoria[] @relation("ProdutoCategoria")
-  estoque    Estoque[]  @relation("ProdutoEstoque") // Adicionando relação oposta
+  estoque    Estoque[]  @relation("ProdutoEstoque")
 }
 
 model Usuarios {
@@ -57,4 +62,25 @@ model Categoria {
   id       Int       @id @default(autoincrement())
   nome     String
   produtos Produtos[] @relation("ProdutoCategoria")
+}
+
+enum Tamanho {
+  PP
+  P
+  M
+  G
+  GG
+}
+
+enum Genero {
+Masculino
+Feminino
+Unissex
+}
+
+enum Categorias {
+Esporte
+Utilitario
+Corrida
+Casual
 }

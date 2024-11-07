@@ -19,14 +19,15 @@ export const deletar = async (id) => {
   });
 };
 
-export const store = async (body) => {
-  const hashedPassword = await bcrypt.hash(body.password, 10);
-  body.password = hashedPassword;
+export const store = async(body) => {
+  const hashedPassword = await bcrypt.hash(body.password,10)
+
+  body.password = hashedPassword
 
   return await prisma.usuarios.create({
-    data: body,
+      data:body
   });
-};
+}
 
 export const update = async (id, body) => {
   return await prisma.usuarios.update({
@@ -35,26 +36,24 @@ export const update = async (id, body) => {
   });
 };
 
-export const login = async (email, password) => {
+export const login = async(email,password) => {
   const usuario = await prisma.usuarios.findFirst({
-    where: { email: email },
-  });
+      where:{ email:email}
+  })
 
-  if (!usuario) {
-    throw new Error("Usuário não encontrado");
+console.log(usuario)
+  if(!usuario) {
+      throw new Error("Usuario nao encontrado")
+  }
+  console.log(password,usuario.password)
+  const isPasswordValid =  await bcrypt.compare(password,usuario.password)
+  if(!isPasswordValid) {
+      throw new Error("Senha invalida")
+
   }
 
-  const isPasswordValid = await bcrypt.compare(password, usuario.password);
-  if (!isPasswordValid) {
-    throw new Error("Senha inválida");
-  }
+  return usuario
 
-  return usuario;
-};
+}
 
-// Função para buscar usuário pelo email
-export const getByEmail = async (email) => {
-  return await prisma.usuarios.findUnique({
-    where: { email },
-  });
-};
+

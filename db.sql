@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     nome VARCHAR(255) NOT NULL,
     cpf VARCHAR(11) NOT NULL UNIQUE,
     telefone VARCHAR(20),
-    email VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     endereco VARCHAR(255) NOT NULL,
     bairro VARCHAR(255) NOT NULL,
@@ -19,13 +19,16 @@ CREATE TABLE IF NOT EXISTS usuarios (
     cep VARCHAR(8) NOT NULL
 );
 
--- Tabela 'estoque'
-CREATE TABLE IF NOT EXISTS estoque (
+-- Tabela 'categoriaPecas'
+CREATE TABLE IF NOT EXISTS categoriaPecas (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    quantidade INT NOT NULL,
-    produto_id INT,
-    FOREIGN KEY (produto_id) REFERENCES produtos(id)
+    tipo ENUM('Calças', 'Bonés', 'Camisetas', 'Bermudas', 'Fones') NOT NULL
+);
+
+-- Tabela 'categoriasFuncaoPeca'
+CREATE TABLE IF NOT EXISTS categoriasFuncaoPeca (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    funcao ENUM('Esporte', 'Utilitario', 'Corrida', 'Casual') NOT NULL
 );
 
 -- Tabela 'produtos'
@@ -41,14 +44,19 @@ CREATE TABLE IF NOT EXISTS produtos (
     tamanho ENUM('PP', 'P', 'M', 'G', 'GG'),
     genero ENUM('Masculino', 'Feminino', 'Unissex'),
     marca VARCHAR(255),
-    categoria_id INT,
-    FOREIGN KEY (categoria_id) REFERENCES categoria(id)
+    categoriaPeca_id INT,
+    categoriaFuncaoPeca_id INT,
+    FOREIGN KEY (categoriaPeca_id) REFERENCES categoriaPecas(id),
+    FOREIGN KEY (categoriaFuncaoPeca_id) REFERENCES categoriasFuncaoPeca(id)
 );
 
--- Tabela 'categoria'
-CREATE TABLE IF NOT EXISTS categoria (
+-- Tabela 'estoque'
+CREATE TABLE IF NOT EXISTS estoque (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nome ENUM('Esporte', 'Utilitario', 'Corrida', 'Casual') NOT NULL
+    nome VARCHAR(255) NOT NULL,
+    quantidade INT NOT NULL,
+    produto_id INT,
+    FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );
 
 -- Tabela 'pedidos'
@@ -74,59 +82,52 @@ CREATE TABLE IF NOT EXISTS pedidos_produtos (
     FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );
 
--- Inserir categorias
-INSERT INTO categoria (nome) VALUES
-    ('Esporte'),
-    ('Utilitario'),
-    ('Corrida'),
-    ('Casual');
-
--- Inserir produtos
-INSERT INTO produtos (subtitle, title, subtitle2, price, promotion, base_url, cor, tamanho, genero, marca, categoria_id) VALUES
-    ('Subtítulo Camiseta 1', 'Camiseta 1', 'Descrição Camiseta 1', '50.00', 45.00, 'https://exemplo.com/camiseta1.jpg', 'Azul', 'M', 'Unissex', 'Nike', 1),
-    ('Subtítulo Calças 1', 'Calças 1', 'Descrição Calças 1', '80.00', 75.00, 'https://exemplo.com/calcas1.jpg', 'Preta', 'G', 'Masculino', 'Adidas', 2),
-    ('Subtítulo Bonés 1', 'Bonés 1', 'Descrição Bonés 1', '25.00', 20.00, 'https://exemplo.com/bones1.jpg', 'Preto', 'GG', 'Masculino', 'New Era', 3),
-    ('Subtítulo Fones 1', 'Fones 1', 'Descrição Fones 1', '150.00', 140.00, 'https://exemplo.com/fones1.jpg', 'Branco', 'M', 'Unissex', 'Sony', 4),
-    ('Subtítulo Tênis 1', 'Tênis 1', 'Descrição Tênis 1', '120.00', 100.00, 'https://exemplo.com/tenis1.jpg', 'Cinza', 'G', 'Masculino', 'Puma', 1);
-
--- Inserir usuários
+-- Inserir dados na tabela 'usuarios'
+-- Estes são os dados dos usuários que farão compras no sistema.
 INSERT INTO usuarios (nome, cpf, telefone, email, password, endereco, bairro, cidade, complemento, cep) VALUES
-    ('João Silva', '12345678901', '85999990000', 'joao@example.com', 'senha123', 'Rua A, 123', 'Centro', 'Fortaleza', 'Apto 101', '12345678'),
-    ('Maria Souza', '10987654321', '85999991111', 'maria@example.com', 'senha456', 'Rua B, 456', 'Bairro B', 'Fortaleza', NULL, '87654321');
+('João Silva', '12345678901', '(11) 98765-4321', 'joao.silva@example.com', 'senha123', 'Rua A, 123', 'Centro', 'São Paulo', '', '01001000'),
+('Maria Oliveira', '98765432109', '(21) 91234-5678', 'maria.oliveira@example.com', 'senha456', 'Avenida B, 456', 'Jardins', 'Rio de Janeiro', 'Apto 101', '20020000');
 
--- Inserir estoque
+-- Inserir dados na tabela 'categoriaPecas'
+-- Definindo os tipos de peças (ex.: Calças, Bonés) para serem usados no catálogo de produtos.
+INSERT INTO categoriaPecas (tipo) VALUES
+('Calças'),
+('Bonés'),
+('Camisetas'),
+('Bermudas'),
+('Fones');
+
+-- Inserir dados na tabela 'categoriasFuncaoPeca'
+-- Definindo as funções de cada peça, como esporte ou casual.
+INSERT INTO categoriasFuncaoPeca (funcao) VALUES
+('Esporte'),
+('Utilitario'),
+('Corrida'),
+('Casual');
+
+-- Inserir dados na tabela 'produtos'
+-- Adicionando produtos com seus detalhes, como título, descrição, preço e promoções.
+INSERT INTO produtos (subtitle, title, subtitle2, price, promotion, base_url, cor, tamanho, genero, marca, categoriaPeca_id, categoriaFuncaoPeca_id) VALUES
+('Calça de Treino', 'Calça Esportiva', 'Modelo confortável', '120.00', 99.90, 'https://example.com/calca.jpg', 'Preto', 'M', 'Masculino', 'Nike', 1, 1),
+('Boné Casual', 'Boné Estiloso', 'Design casual', '50.00', NULL, 'https://example.com/bone.jpg', 'Azul', NULL, 'Unissex', 'Adidas', 2, 4),
+('Camiseta Corrida', 'Camiseta Leve', 'Ideal para corridas', '70.00', 60.00, 'https://example.com/camiseta.jpg', 'Vermelho', 'P', 'Feminino', 'Puma', 3, 3);
+
+-- Inserir dados na tabela 'estoque'
+-- Informando o estoque disponível para cada produto.
 INSERT INTO estoque (nome, quantidade, produto_id) VALUES
-    ('Estoque Camiseta', 100, 1),
-    ('Estoque Calças', 50, 2),
-    ('Estoque Bonés', 30, 3),
-    ('Estoque Fones', 20, 4),
-    ('Estoque Tênis', 40, 5);
+('Calça Esportiva', 50, 1),
+('Boné Estiloso', 30, 2),
+('Camiseta Leve', 20, 3);
 
--- Inserir pedidos
+-- Inserir dados na tabela 'pedidos'
+-- Registro de pedidos feitos pelos usuários, incluindo forma de pagamento e status do pedido.
 INSERT INTO pedidos (numeroPedido, formapagamento, valorpedido, status, usuario_id) VALUES
-    ('PED001', 'Cartão de Crédito', 200.00, 'Finalizado', 1),
-    ('PED002', 'Boleto', 150.00, 'Encaminhado', 2);
+('PED001', 'Cartão de Crédito', 159.90, 'Finalizado', 1),
+('PED002', 'Boleto', 70.00, 'Encaminhado', 2);
 
--- Inserir pedidos_produtos
+-- Inserir dados na tabela 'pedidos_produtos'
+-- Relacionando produtos aos pedidos, especificando a quantidade de cada produto.
 INSERT INTO pedidos_produtos (pedido_id, produto_id, quantidade) VALUES
-    (1, 1, 2), -- Pedido 1 inclui 2 camisetas
-    (1, 2, 1), -- Pedido 1 inclui 1 calça
-    (2, 4, 1); -- Pedido 2 inclui 1 fone
-
--- Verificar os dados da tabela 'categoria'
-SELECT * FROM categoria;
-
--- Verificar os dados da tabela 'produtos'
-SELECT * FROM produtos;
-
--- Verificar os dados da tabela 'usuarios'
-SELECT * FROM usuarios;
-
--- Verificar os dados da tabela 'estoque'
-SELECT * FROM estoque;
-
--- Verificar os dados da tabela 'pedidos'
-SELECT * FROM pedidos;
-
--- Verificar os dados da tabela 'pedidos_produtos'
-SELECT * FROM pedidos_produtos;
+(1, 1, 1),
+(1, 2, 1),
+(2, 3, 1);

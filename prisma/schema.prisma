@@ -10,42 +10,56 @@ generator client {
 model Usuarios {
   id          Int        @id @default(autoincrement())
   nome        String
-  cpf         String
+  cpf         String     @unique
   telefone    String
   email       String     @unique
   password    String
-  endereco    String     // Campo para o endereço do usuário
-  bairro      String     // Campo para o bairro
-  cidade      String     // Campo para a cidade
-  complemento String?    // Campo opcional para o complemento
-  cep         String     // Campo para o CEP
+  endereco    String
+  bairro      String
+  cidade      String
+  complemento String?
+  cep         String
   pedidos     Pedidos[]
 }
 
+model CategoriaPecas {
+  id       Int        @id @default(autoincrement())
+  tipo     String     @unique
+  produtos Produtos[]
+}
+
+model CategoriasFuncaoPeca {
+  id       Int        @id @default(autoincrement())
+  funcao   String     @unique
+  produtos Produtos[]
+}
+
 model Estoque {
-  id         Int         @id @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   nome       String
   quantidade Int
+  produto    Produtos   @relation(fields: [produto_id], references: [id], name: "ProdutoEstoque")
   produto_id Int
-  produto    Produtos    @relation(fields: [produto_id], references: [id], name: "ProdutoEstoque") // Nomeando a relação
 }
 
 model Produtos {
-  id              Int               @id @default(autoincrement())
-  subtitle        String
-  title           String
-  subtitle2       String
-  price           String
-  promotion       Decimal
-  base_url        String
-  cor             String
-  tamanho         Tamanho
-  genero          Genero
-  marca           String
-  categoria       Categorias
-  categorias      Categoria[]       @relation("ProdutoCategoria")
-  estoque         Estoque[]         @relation("ProdutoEstoque")
-  pedidosProdutos PedidosProdutos[] // Relação com PedidosProdutos
+  id                    Int                    @id @default(autoincrement())
+  subtitle              String
+  title                 String
+  subtitle2             String
+  price                 String
+  promotion             Decimal?
+  base_url              String
+  cor                   String
+  tamanho               Tamanho?
+  genero                Genero
+  marca                 String
+  categoriaPeca         CategoriaPecas         @relation(fields: [categoriaPeca_id], references: [id])
+  categoriaPeca_id      Int
+  categoriaFuncaoPeca   CategoriasFuncaoPeca   @relation(fields: [categoriaFuncaoPeca_id], references: [id])
+  categoriaFuncaoPeca_id Int
+  estoque               Estoque[]              @relation("ProdutoEstoque")
+  pedidosProdutos       PedidosProdutos[]      // Relação com PedidosProdutos
 }
 
 model Pedidos {
@@ -56,7 +70,7 @@ model Pedidos {
   status         StatusPedido
   usuario_id     Int
   usuario        Usuarios          @relation(fields: [usuario_id], references: [id])
-  produtos       PedidosProdutos[] // Relacionamento com Produtos por meio de PedidosProdutos
+  produtos       PedidosProdutos[]
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 }
@@ -68,13 +82,6 @@ model PedidosProdutos {
   quantidade  Int
   pedido      Pedidos   @relation(fields: [pedido_id], references: [id])
   produto     Produtos  @relation(fields: [produto_id], references: [id])
-}
-
-
-model Categoria {
-  id       Int         @id @default(autoincrement())
-  nome     String
-  produtos Produtos[]  @relation("ProdutoCategoria")
 }
 
 enum Tamanho {
@@ -89,13 +96,6 @@ enum Genero {
   Masculino
   Feminino
   Unissex
-}
-
-enum Categorias {
-  Esporte
-  Utilitario
-  Corrida
-  Casual
 }
 
 enum StatusPedido {

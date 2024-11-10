@@ -63,16 +63,17 @@ model Produtos {
 }
 
 model Pedidos {
-  id             Int               @id @default(autoincrement())
-  numeroPedido   String            @unique
+  id           Int      @id @default(autoincrement())
+  numeroPedido String   @unique
   formapagamento String
-  valorpedido    Decimal
-  status         StatusPedido
-  usuario_id     Int
-  usuario        Usuarios          @relation(fields: [usuario_id], references: [id])
-  produtos       PedidosProdutos[]
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
+  valorpedido  Float
+  status       StatusPedido @default(Encaminhado)
+  deleted      Boolean  @default(false)
+  usuarioId    Int
+  usuario      Usuarios @relation(fields: [usuarioId], references: [id])  // Alterado de Usuario para Usuarios
+  produtos     PedidosProdutos[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 model PedidosProdutos {

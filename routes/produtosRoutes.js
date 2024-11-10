@@ -7,5 +7,6 @@ route.get('/',produtosController.getAll)
 route.get('/getone/:id',produtosController.getOne)
 route.delete('/:id',produtosController.deletar)
 route.post('/',produtosController.store)
+route.post('/',produtosController.store)
 route.put('/:id',produtosController.update)
 export default route

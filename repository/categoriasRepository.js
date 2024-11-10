@@ -26,10 +26,18 @@ export const deletar = async (id) => {
 };
 
 export const store = async (body) => {
-  return await prisma.categoria.create({
-    data: body,
+  return await prisma.pedidos.create({
+    data: {
+      formapagamento: body.formapagamento,
+      valorpedido: body.valorpedido,
+      deleted: false, 
+      numeroPedido: body.numeroPedido, 
+      status: 'Encaminhado',
+      usuario: { connect: { id: body.usuario_id } }, 
+    },
   });
 };
+
 
 export const update = async (id, body) => {
   return await prisma.categoria.update({

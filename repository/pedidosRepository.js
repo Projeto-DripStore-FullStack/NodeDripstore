@@ -23,12 +23,11 @@ export const getOne = async (id) => {
 export const store = async (body) => {
   return await prisma.pedidos.create({
     data: {
-      vendedor: body.vendedor,
-      cliente: body.cliente,
+      numeroPedido: body.numeroPedido,
       formapagamento: body.formapagamento,
-      valorpedido: body.valorpedido,
-      deleted: false, // Define o pedido como não deletado
-      usuario: { connect: { id: body.usuario_id } }, // Associa ao usuário via chave estrangeira
+      valorpedido: parseFloat(body.valorpedido), // Garantir que o valor seja float
+      deleted: false,
+      usuario: { connect: { id: body.usuarioId } },
     },
   });
 };
@@ -44,8 +43,6 @@ export const update = async (id, body) => {
   return await prisma.pedidos.update({
     where: { id: parseInt(id) },
     data: {
-      vendedor: body.vendedor,
-      cliente: body.cliente,
       formapagamento: body.formapagamento,
       valorpedido: body.valorpedido,
     },

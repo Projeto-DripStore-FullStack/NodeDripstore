@@ -68,7 +68,6 @@ model Pedidos {
   formapagamento String
   valorpedido  Float
   status       StatusPedido @default(Encaminhado)
-  deleted      Boolean  @default(false)
   usuarioId    Int
   usuario      Usuarios @relation(fields: [usuarioId], references: [id])  // Alterado de Usuario para Usuarios
   produtos     PedidosProdutos[]

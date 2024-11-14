@@ -121,6 +121,7 @@ INSERT INTO estoque (nome, quantidade, produto_id) VALUES
 
 -- Inserir dados na tabela 'pedidos'
 -- Registro de pedidos feitos pelos usuários, incluindo forma de pagamento e status do pedido.
+-- Note que o valor do campo usuario_id refere-se aos IDs dos usuários já inseridos.
 INSERT INTO pedidos (numeroPedido, formapagamento, valorpedido, status, usuario_id) VALUES
 ('PED001', 'Cartão de Crédito', 159.90, 'Finalizado', 1),
 ('PED002', 'Boleto', 70.00, 'Encaminhado', 2);

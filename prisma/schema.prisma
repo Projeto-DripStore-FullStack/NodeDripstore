@@ -63,17 +63,18 @@ model Produtos {
 }
 
 model Pedidos {
-  id           Int      @id @default(autoincrement())
-  numeroPedido String   @unique
+  id            Int      @id @default(autoincrement())
+  numeroPedido  String   @unique
   formapagamento String
-  valorpedido  Float
-  status       StatusPedido @default(Encaminhado)
-  usuarioId    Int
-  usuario      Usuarios @relation(fields: [usuarioId], references: [id])  // Alterado de Usuario para Usuarios
-  produtos     PedidosProdutos[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  valorpedido   Float
+  status        StatusPedido @default(Encaminhado)
+  usuario_id   Int       // Alterado de usuarioId para usuarios_id
+  usuario       Usuarios @relation(fields: [usuario_id], references: [id])  // Alterado aqui também
+  produtos      PedidosProdutos[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
+
 
 model PedidosProdutos {
   id          Int      @id @default(autoincrement())

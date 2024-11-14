@@ -12,6 +12,7 @@ export const getAll = async () => {
 };
 
 export const getOne = async (id) => {
+
   return await prisma.pedidos.findUnique({
     where: { id: parseInt(id) },
     include: {
@@ -21,13 +22,13 @@ export const getOne = async (id) => {
 };
 
 export const store = async (body) => {
+  console.log(body)
   return await prisma.pedidos.create({
     data: {
       numeroPedido: body.numeroPedido,
       formapagamento: body.formapagamento,
       valorpedido: parseFloat(body.valorpedido), // Garantir que o valor seja float
-      deleted: false,
-      usuario: { connect: { id: body.usuarioId } },
+      usuario_id: body.usuario_id, // Inclui dados do usuário
     },
   });
 };

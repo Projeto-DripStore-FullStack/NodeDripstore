@@ -11,39 +11,37 @@ export const getAll = async (req, res) => {
 };
 
 export const getOne = async (req, res) => {
+  const { id } = req.params;  
   try {
-    const { id } = req.params;
-    const pedido = await pedidosRepository.getOne(id);
-    if (pedido) {
-      res.status(200).json(pedido);
-    } else {
-      res.status(404).send("Pedido não encontrado");
+    const pedido = await pedidosRepository.getOne(id);  
+    if (!pedido) {
+      return res.status(404).json({ message: "Pedido não encontrado" });
     }
+    res.status(200).json(pedido);
   } catch (error) {
-    res.status(500).send(`O erro foi ${error.message}`);
+    console.error(error);
+    res.status(500).json({ message: "Erro ao buscar o pedido" });
   }
 };
 
 export const store = async (req, res) => {
   try {
-    const  body  = req.body;
-console.log(body)
+    const body = req.body;
+    console.log(body);
+    
     const valorPedidoDecimal = parseFloat(body.valorpedido);
-
     if (isNaN(valorPedidoDecimal)) {
       return res.status(400).send("Valorpedido deve ser um número válido.");
     }
 
-    // Verificar se o usuario_id foi fornecido
     if (!body.usuario_id) {
       return res.status(400).send("Identificador de usuário inválido.");
     }
 
     const pedido = await pedidosRepository.store(body);
- 
+
     res.status(201).json(pedido);
   } catch (error) {
-
     res.status(500).send(`Erro ao criar o pedido: ${error.message}`);
   }
 };

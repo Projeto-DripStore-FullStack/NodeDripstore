@@ -47,11 +47,12 @@ model Produtos {
   subtitle              String
   title                 String
   subtitle2             String
-  price                 String
+  price                 Float
   promotion             Decimal?
   base_url              String
   cor                   String
-  tamanho               Tamanho?
+  tamanho               String?
+  estado                Estado
   genero                Genero
   marca                 String
   categoriaPeca         CategoriaPecas         @relation(fields: [categoriaPeca_id], references: [id])
@@ -63,18 +64,25 @@ model Produtos {
 }
 
 model Pedidos {
-  id            Int      @id @default(autoincrement())
-  numeroPedido  String   @unique
-  formapagamento String
+  id            Int           @id @default(autoincrement())
+  numeroPedido  String        @unique
+  formapagamento FormaPagamento
   valorpedido   Float
-  status        StatusPedido @default(Encaminhado)
-  usuario_id   Int       // Alterado de usuarioId para usuarios_id
-  usuario       Usuarios @relation(fields: [usuario_id], references: [id])  // Alterado aqui também
+  status        StatusPedido   @default(Encaminhado)
+  usuario_id    Int
+  usuario       Usuarios       @relation(fields: [usuario_id], references: [id])
   produtos      PedidosProdutos[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  nomeCartao    String?
+  validadeCartao String?
+  cvvCartao     String?
+  numeroCartao  String?
 }
 
+enum FormaPagamento {
+  Debito
+  Credito
+  Boleto
+}
 
 model PedidosProdutos {
   id          Int      @id @default(autoincrement())
@@ -85,18 +93,15 @@ model PedidosProdutos {
   produto     Produtos  @relation(fields: [produto_id], references: [id])
 }
 
-enum Tamanho {
-  PP
-  P
-  M
-  G
-  GG
-}
-
 enum Genero {
   Masculino
   Feminino
   Unissex
+}
+
+enum Estado {
+  Novo
+  Seminovo
 }
 
 enum StatusPedido {

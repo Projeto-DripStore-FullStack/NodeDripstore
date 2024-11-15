@@ -12,23 +12,37 @@ export const getAll = async () => {
 };
 
 export const getOne = async (id) => {
-
-  return await prisma.pedidos.findUnique({
-    where: { id: parseInt(id) },
-    include: {
-      usuario: true, // Inclui dados do usuário associado ao pedido
-    },
-  });
+  try {
+    return await prisma.pedidos.findUnique({
+      where: { id: parseInt(id) },
+      include: {
+        usuario: true,  // Inclui dados do usuário associado ao pedido
+        produtos: {     // Inclui os produtos do pedido
+          include: {
+            produto: true,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Erro ao buscar pedido:", error);
+    throw new Error("Erro ao buscar pedido");
+  }
 };
 
 export const store = async (body) => {
-  console.log(body)
+  console.log(body);
   return await prisma.pedidos.create({
     data: {
       numeroPedido: body.numeroPedido,
       formapagamento: body.formapagamento,
-      valorpedido: parseFloat(body.valorpedido), // Garantir que o valor seja float
-      usuario_id: body.usuario_id, // Inclui dados do usuário
+      valorpedido: parseFloat(body.valorpedido),
+      status: body.status,
+      usuario_id: body.usuario_id,
+      nomeCartao: body.nomeCartao,
+      validadeCartao: body.validadeCartao,
+      cvvCartao: body.cvvCartao,
+      numeroCartao: body.numeroCartao,
     },
   });
 };

@@ -3,6 +3,7 @@ import * as pedidosController from "../controller/pedidosController.js"
 
 
 const route = express.Router()
+route.get('/:usuario_id', pedidosController.getByUserId);
 route.get('/',pedidosController.getAll)
 route.get('/getone/:id',pedidosController.getOne)
 route.delete('/:id',pedidosController.deletar)

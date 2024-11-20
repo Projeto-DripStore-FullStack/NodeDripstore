@@ -3,30 +3,33 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const getByUserId = async (usuario_id) => {
-  try {
-    return await prisma.pedidos.findMany({
-      where: { usuario_id: parseInt(usuario_id) },
-      include: {
-        usuario: true, // Inclui dados do usuário associado ao pedido
-        produtos: {     // Inclui os produtos do pedido
-          include: {
-            produto: true,
+export const getByUserId = async (usuarioId) => {
+  return await prisma.usuarios.findUnique({
+    where: { id: parseInt(usuarioId) },
+    include: {
+      pedidos: {
+        include: {
+          produtos: {
+            include: {
+              produto: true, // Inclui os dados do produto no pedido
+            },
           },
         },
       },
-    });
-  } catch (error) {
-    console.error("Erro ao buscar pedidos do usuário:", error);
-    throw new Error("Erro ao buscar pedidos do usuário");
-  }
+    },
+  });
 };
-
 
 export const getAll = async () => {
   return await prisma.pedidos.findMany({
     include: {
       usuario: true, // Inclui dados do usuário associado ao pedido
+      produtos: {
+        // Inclui os produtos associados ao pedido
+        include: {
+          produto: true, // Inclui os dados detalhados de cada produto
+        },
+      },
     },
   });
 };
@@ -36,8 +39,9 @@ export const getOne = async (id) => {
     return await prisma.pedidos.findUnique({
       where: { id: parseInt(id) },
       include: {
-        usuario: true,  // Inclui dados do usuário associado ao pedido
-        produtos: {     // Inclui os produtos do pedido
+        usuario: true, // Inclui dados do usuário associado ao pedido
+        produtos: {
+          // Inclui os produtos do pedido
           include: {
             produto: true,
           },

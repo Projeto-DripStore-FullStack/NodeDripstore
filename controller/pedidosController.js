@@ -1,6 +1,23 @@
 // controller/pedidosController.js
 import * as pedidosRepository from "../repository/pedidosRepository.js";
 
+export const getByUserId = async (req, res) => {
+  const { usuario_id } = req.params; // Pega o ID do usuário da URL
+  try {
+    const usuarioComPedidos = await pedidosRepository.getByUserId(usuario_id);
+
+    if (!usuarioComPedidos || usuarioComPedidos.pedidos.length === 0) {
+      return res.status(404).json({ message: "Nenhum pedido encontrado para este usuário." });
+    }
+
+    // Retorna apenas os pedidos com os dados necessários
+    res.status(200).json(usuarioComPedidos.pedidos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Erro ao buscar pedidos do usuário." });
+  }
+};
+
 export const getAll = async (req, res) => {
   try {
     const pedidos = await pedidosRepository.getAll();

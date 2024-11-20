@@ -5,8 +5,9 @@ export const getByUserId = async (req, res) => {
   const { usuario_id } = req.params; // Pega o ID do usuário da URL
   try {
     const usuarioComPedidos = await pedidosRepository.getByUserId(usuario_id);
+    console.log("usuarioComPedidos no controlador:", usuarioComPedidos); // Verifique a estrutura do retorno
 
-    if (!usuarioComPedidos || usuarioComPedidos.pedidos.length === 0) {
+    if (!usuarioComPedidos || !usuarioComPedidos.pedidos || usuarioComPedidos.pedidos.length === 0) {
       return res.status(404).json({ message: "Nenhum pedido encontrado para este usuário." });
     }
 
@@ -17,6 +18,7 @@ export const getByUserId = async (req, res) => {
     res.status(500).json({ message: "Erro ao buscar pedidos do usuário." });
   }
 };
+
 
 export const getAll = async (req, res) => {
   try {

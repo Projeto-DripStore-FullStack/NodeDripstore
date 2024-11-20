@@ -4,30 +4,39 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const getByUserId = async (usuarioId) => {
-  return await prisma.usuarios.findUnique({
-    where: { id: parseInt(usuarioId) },
-    include: {
-      pedidos: {
-        include: {
-          produtos: {
-            include: {
-              produto: true, // Inclui os dados do produto no pedido
+  try {
+    const usuarioComPedidos = await prisma.usuarios.findUnique({
+      where: { id: parseInt(usuarioId) },
+      include: {
+        pedidos: {
+          include: {
+            produtos: {
+              include: {
+                produto: true,
+              },
             },
           },
         },
       },
-    },
-  });
+    });
+
+    console.log("usuarioComPedidos:", usuarioComPedidos); 
+
+    return usuarioComPedidos;
+  } catch (error) {
+    console.error("Erro ao buscar os pedidos:", error);
+    throw new Error("Erro ao buscar os pedidos");
+  }
 };
+
 
 export const getAll = async () => {
   return await prisma.pedidos.findMany({
     include: {
-      usuario: true, // Inclui dados do usuário associado ao pedido
+      usuario: true,
       produtos: {
-        // Inclui os produtos associados ao pedido
         include: {
-          produto: true, // Inclui os dados detalhados de cada produto
+          produto: true,
         },
       },
     },

@@ -45,25 +45,25 @@ export const getOne = async (req, res) => {
 
 export const store = async (req, res) => {
   try {
-    const body = req.body;
-    console.log(body);
-    
-    const valorPedidoDecimal = parseFloat(body.valorpedido);
-    if (isNaN(valorPedidoDecimal)) {
-      return res.status(400).send("Valorpedido deve ser um número válido.");
+    const { usuario_id, produtos, ...pedidoData } = req.body;
+
+    if (!usuario_id || !produtos || produtos.length === 0) {
+      return res.status(400).json({ message: "Usuário ou produtos inválidos." });
     }
 
-    if (!body.usuario_id) {
-      return res.status(400).send("Identificador de usuário inválido.");
-    }
-
-    const pedido = await pedidosRepository.store(body);
+    const pedido = await pedidosRepository.store({
+      ...pedidoData,
+      usuario_id,
+      produtos,
+    });
 
     res.status(201).json(pedido);
   } catch (error) {
-    res.status(500).send(`Erro ao criar o pedido: ${error.message}`);
+    console.error("Erro ao criar pedido:", error);
+    res.status(500).json({ message: "Erro ao criar pedido." });
   }
 };
+
 
 export const deletar = async (req, res) => {
   try {

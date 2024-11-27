@@ -3,6 +3,7 @@ import * as pedidosRepository from "../repository/pedidosRepository.js";
 
 export const getByUserId = async (req, res) => {
   const { usuario_id } = req.params; // Pega o ID do usuário da URL
+  console.log(usuario_id)
   try {
     const usuarioComPedidos = await pedidosRepository.getByUserId(usuario_id);
     console.log("usuarioComPedidos no controlador:", usuarioComPedidos); // Verifique a estrutura do retorno

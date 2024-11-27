@@ -20,15 +20,12 @@ export const getByUserId = async (usuarioId) => {
       },
     });
 
-    console.log("usuarioComPedidos:", usuarioComPedidos); 
-
-    return usuarioComPedidos;
+    return usuarioComPedidos ? usuarioComPedidos.pedidos : []; // Retorna os pedidos ou um array vazio
   } catch (error) {
     console.error("Erro ao buscar os pedidos:", error);
     throw new Error("Erro ao buscar os pedidos");
   }
 };
-
 
 export const getAll = async () => {
   return await prisma.pedidos.findMany({

@@ -20,15 +20,12 @@ export const getByUserId = async (usuarioId) => {
       },
     });
 
-    console.log("usuarioComPedidos:", usuarioComPedidos); 
-
-    return usuarioComPedidos;
+    return usuarioComPedidos ? usuarioComPedidos.pedidos : []; // Retorna os pedidos ou um array vazio
   } catch (error) {
     console.error("Erro ao buscar os pedidos:", error);
     throw new Error("Erro ao buscar os pedidos");
   }
 };
-
 
 export const getAll = async () => {
   return await prisma.pedidos.findMany({
@@ -64,26 +61,43 @@ export const getOne = async (id) => {
 };
 
 export const store = async (body) => {
-  console.log(body);
-  return await prisma.pedidos.create({
-    data: {
-      numeroPedido: body.numeroPedido,
-      formapagamento: body.formapagamento,
-      valorpedido: parseFloat(body.valorpedido),
-      status: body.status,
-      usuario_id: body.usuario_id,
-      nomeCartao: body.nomeCartao,
-      validadeCartao: body.validadeCartao,
-      cvvCartao: body.cvvCartao,
-      numeroCartao: body.numeroCartao,
-    },
-  });
+  try {
+    const pedido = await prisma.pedidos.create({
+      data: {
+        numeroPedido: body.numeroPedido,
+        formapagamento: body.formapagamento,
+        valorpedido: parseFloat(body.valorpedido),
+        status: body.status || "Encaminhado",
+        usuario_id: body.usuario_id,
+        nomeCartao: body.nomeCartao,
+        validadeCartao: body.validadeCartao,
+        cvvCartao: body.cvvCartao,
+        numeroCartao: body.numeroCartao,
+      },
+    });
+
+    if (body.produtos && body.produtos.length > 0) {
+      const pedidosProdutosData = body.produtos.map((produto) => ({
+        pedido_id: pedido.id,
+        produto_id: produto.produto_id,
+        quantidade: produto.quantidade,
+      }));
+      await prisma.pedidosProdutos.createMany({
+        data: pedidosProdutosData,
+      });
+    }
+
+    return pedido;
+  } catch (error) {
+    console.error("Erro ao armazenar pedido:", error);
+    throw new Error("Erro ao criar pedido.");
+  }
 };
 
 export const deletar = async (id) => {
   return await prisma.pedidos.update({
     where: { id: parseInt(id) },
-    data: { deleted: true }, // Marca o pedido como deletado
+    data: { deleted: true },
   });
 };
 
